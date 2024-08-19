@@ -38,6 +38,8 @@ for idx, url in enumerate(urls):
     xml_data = response.content
 
     soup = BeautifulSoup(xml_data, 'xml')
+    print (soup.find('channel').find('title').text)
+
     item = soup.find('item')
 
     if item:
@@ -48,10 +50,10 @@ for idx, url in enumerate(urls):
             mp3_url = enclosure_tag['url']
 
             # Use the title from the feed or a default if not available
-            orig_fn_or_title = title_tag.text if title_tag else f'episode_{idx + 1}'
+            title = title_tag.text if title_tag else f'episode_{idx + 1}'
 
             # Sanitize `orig_fn_or_title` to remove or replace any characters not suitable for filenames
-            sanitized_title = ''.join(c for c in orig_fn_or_title if c.isalnum() or c in (' ', '_')).rstrip()
+            sanitized_title = ''.join(c for c in title if c.isalnum() or c in (' ', '_')).rstrip()
 
             file_path = os.path.join(download_dir, f'podcast_{idx + 1}.mp3')
 
@@ -74,4 +76,4 @@ for idx, url in enumerate(urls):
             print (f'podcast_{idx + 1} from {sanitized_title} for {format_timespan(audio.info.length)}')
             time_length += audio.info.length
 
-print(f"Downloaded files to {download_dir} for {format_timespan(time_length)}")
+print(f"Downloaded {len(urls)} files to {download_dir} for {format_timespan(time_length)}")
